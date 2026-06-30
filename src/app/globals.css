@@ -1,0 +1,291 @@
+@import "tailwindcss";
+
+/* ── Design tokens (DJI-inspired) ──────────────────────
+   Background: #0c0c0c  — DJI charcoal, not pure black
+   Accent:     #2b8dff  — DJI blue
+   No serifs, no champagne gold
+   ─────────────────────────────────────────────────── */
+:root {
+  --bg:         #0c0c0c;
+  --bg-2:       #131313;                    /* subtle section depth */
+  --fg:         #ffffff;
+  --fg-mid:     rgba(255,255,255,0.58);
+  --fg-dim:     rgba(255,255,255,0.28);
+  --accent:     #2b8dff;                    /* DJI blue */
+  --accent-dim: rgba(43,141,255,0.08);
+  --rule:       rgba(255,255,255,0.08);
+  --border:     rgba(255,255,255,0.05);
+}
+
+/* ── Reset ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: auto; }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-display), -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+::selection { background: var(--accent); color: #fff; }
+
+/* ── Typography roles ───────────────────────────────── */
+
+/* Display — Space Grotesk bold, DJI-style big statements */
+.serif {
+  font-family: var(--font-display), -apple-system, sans-serif;
+  font-weight: 700;
+  font-style: normal;
+  letter-spacing: -0.02em;
+}
+
+/* Technical mono */
+.mono {
+  font-family: var(--font-mono), "Courier New", monospace;
+  font-weight: 400;
+}
+
+/* Micro-label: blue accent, tracking, all-caps */
+.label {
+  font-family: var(--font-display), sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+/* Dim label variant */
+.label-dim {
+  font-family: var(--font-display), sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+  font-weight: 400;
+}
+
+/* Data value — mono, crisp white */
+.data {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
+  color: var(--fg);
+  font-weight: 400;
+}
+
+/* ── Spec row ───────────────────────────────────────── */
+.spec-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--rule);
+  gap: 2rem;
+}
+.spec-row:first-child { border-top: 1px solid var(--rule); }
+.spec-row:hover { background: rgba(255,255,255,0.012); }
+
+/* ── Custom cursor ──────────────────────────────────── */
+*, *::before, *::after { cursor: none !important; }
+
+#cursor {
+  position: fixed;
+  top: 0; left: 0;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  pointer-events: none;
+  z-index: 99999;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: normal;
+  transition: transform 0.1s ease;
+  will-change: transform;
+}
+
+/* ── Initial reveal state ───────────────────────────── */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(24px);
+}
+
+/* ── Mobile ─────────────────────────────────────────── */
+@media (max-width: 767px) {
+  .spec-row { flex-direction: column; gap: 0.3rem; }
+  [data-reveal] { transform: translateY(14px); }
+}
+
+/* ── Hero CSS animations (zero GSAP dependency) ──────
+   Play on mount immediately after loader exits.
+   Use `both` fill-mode so elements stay visible after.
+   ─────────────────────────────────────────────────── */
+@keyframes heroFadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes heroLineGrow {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+@keyframes heroScrollPulse {
+  0%   { transform: scaleY(0); transform-origin: top;    opacity: 1; }
+  55%  { transform: scaleY(1); transform-origin: top;    opacity: 1; }
+  56%  { transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: bottom; opacity: 0; }
+}
+
+.hero-anim-1 { opacity: 0; animation: heroFadeUp 0.75s cubic-bezier(0.16,1,0.3,1) 0.45s forwards; }
+.hero-anim-2 { opacity: 0; animation: heroFadeUp 0.90s cubic-bezier(0.16,1,0.3,1) 0.62s forwards; }
+.hero-anim-3 { opacity: 0; animation: heroFadeUp 0.85s cubic-bezier(0.16,1,0.3,1) 0.80s forwards; }
+.hero-anim-4 { opacity: 0; animation: heroFadeUp 0.80s cubic-bezier(0.16,1,0.3,1) 1.00s forwards; }
+
+.hero-line {
+  transform-origin: left;
+  animation: heroLineGrow 0.65s cubic-bezier(0.16,1,0.3,1) 0.88s both;
+}
+.hero-scroll-pulse {
+  position: absolute; inset: 0;
+  background: var(--accent);
+  transform-origin: top;
+  animation: heroScrollPulse 1.9s ease-in-out 1.8s infinite;
+}
+
+/* ── 3D model section scan line ──────────────────── */
+@keyframes modelScanLine {
+  0%   { top: -2px; opacity: 0; }
+  6%   { opacity: 0.7; }
+  88%  { opacity: 0.45; }
+  100% { top: 100%; opacity: 0; }
+}
+.model-scan-line {
+  position: absolute;
+  left: 0; right: 0; height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(43,141,255,0.5) 35%,
+    rgba(43,141,255,0.95) 50%,
+    rgba(43,141,255,0.5) 65%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 12;
+  animation: modelScanLine 5.5s linear infinite;
+}
+
+/* ── Section entrance / exit zoom ───────────────── */
+[data-zoom-enter] {
+  will-change: transform, opacity;
+  transform-origin: center center;
+}
+
+/* ── Loader camera animations ────────────────────── */
+@keyframes loaderApertureSpin {
+  to { transform: rotate(360deg); }
+}
+@keyframes loaderApertureSpinRev {
+  to { transform: rotate(-360deg); }
+}
+@keyframes loaderLensGlow {
+  0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+  50%       { opacity: 1;   transform: translate(-50%, -50%) scale(1.4); }
+}
+
+.loader-aperture-spin {
+  animation: loaderApertureSpin 7s linear infinite;
+}
+.loader-aperture-spin-rev {
+  animation: loaderApertureSpinRev 11s linear infinite;
+}
+
+/* ── Mobile layout helpers ───────────────────────── */
+
+/* 2-column section grids collapse to 1 column */
+.mob-grid-2col {
+  display: grid;
+  grid-template-columns: 1fr 0.82fr;
+  gap: clamp(2rem, 5vw, 5.5rem);
+  align-items: center;
+}
+
+/* Section §9 2-col */
+.mob-grid-2col-even {
+  display: grid;
+  grid-template-columns: 1fr 0.9fr;
+  gap: clamp(3rem, 8vw, 8rem);
+  align-items: start;
+}
+
+/* Horizontal panel track — full width flex row on desktop */
+.hpanel-track {
+  display: flex;
+  will-change: transform;
+}
+
+/* Desktop spec sections pushed to one side */
+.spec-col-right {
+  padding-right: clamp(2rem, 8vw, 8rem);
+  max-width: 50%;
+}
+
+@media (max-width: 767px) {
+  /* Collapse 2-col grids */
+  .mob-grid-2col,
+  .mob-grid-2col-even {
+    grid-template-columns: 1fr !important;
+    gap: 2.5rem !important;
+  }
+
+  /* Horizontal panels — vertical stack on mobile (GSAP pin skipped) */
+  .hpanel-track {
+    flex-direction: column !important;
+    width: 100% !important;
+    transform: none !important;
+  }
+  .hpanel-item {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 70vh;
+    flex-direction: column !important;
+    padding: clamp(3rem, 7vw, 5rem) clamp(1.5rem, 6vw, 3rem) !important;
+    gap: 2rem;
+  }
+  /* Hide the vertical divider between number and text */
+  .hpanel-divider { display: none !important; }
+  /* Giant number smaller on mobile */
+  .hpanel-number { font-size: clamp(6rem, 22vw, 10rem) !important; }
+  /* Right text: full width on mobile */
+  .hpanel-right { padding-right: 0 !important; }
+  /* Left number block: full width */
+  .hpanel-left { width: 100% !important; }
+
+  /* Spec sections that sit right-aligned on desktop */
+  .spec-col-right {
+    max-width: 100% !important;
+    padding-left: clamp(1.5rem, 6vw, 3rem) !important;
+    padding-right: clamp(1.5rem, 6vw, 3rem) !important;
+  }
+
+  /* Hide complex desktop-only model section HUD on mobile */
+  .mob-hide { display: none !important; }
+
+  /* Footer */
+  .footer-inner {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 2rem !important;
+  }
+  .footer-specs {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 1.5rem !important;
+  }
+
+  /* Sensor callout text — don't let it overflow under canvas on mobile */
+  /* (SensorCallouts uses JS-computed positions already clamped to viewport) */
+
+  /* Canvas-based scroll sections — reduce height for mobile */
+  .scroll-container-mobile { height: 800vh !important; }
+}

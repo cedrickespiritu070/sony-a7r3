@@ -1,0 +1,8 @@
+Model Information:
+* title:	Sony Alpha 3
+* source:	https://sketchfab.com/3d-models/sony-alpha-3-c060851707bb4c82b0f31a92742cd36f
+* author:	Khem Jay (https://sketchfab.com/Khemjay.Paclaunaph)
+
+Model License:
+* license type:	SKETCHFAB Standard (https://sketchfab.com/licenses)
+* requirements:	Under basic restrictions, use worldwide, on all types of media, commercially or not, and in all types of derivative works
